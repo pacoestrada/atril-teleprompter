@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Atril Teleprónter
+GenericName=Teleprónter
+Comment=Tu voz. Tu ritmo. Un teleprónter de Paco Estrada y Compilando Podcast
+Exec=atril-teleprompter %f
+Icon=es.compilando.AtrilTeleprompter
+Terminal=false
+Categories=AudioVideo;Utility;
+Keywords=teleprompter;teleprónter;guion;lectura;locución;podcast;Compilando;
+StartupNotify=true
