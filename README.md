@@ -4,7 +4,7 @@
 
 ![Pantalla principal de Atril](docs/atril-pantalla-principal.png)
 
-Una aplicación de escritorio para locuciones, vídeos, presentaciones y pódcast. Funciona sin conexión, con letra grande, desplazamiento suave y controles de teclado y ratón. Tu nombre y el logo de Compilando permanecen en la cabecera; los atajos más utilizados siguen visibles durante la lectura y en pantalla completa.
+Una aplicación de escritorio para locuciones, vídeos, presentaciones y pódcast. Funciona sin conexión, con letra grande, desplazamiento suave y controles de teclado y ratón. Los atajos más utilizados siguen visibles durante la lectura y en pantalla completa.
 
 ## Descargas de la versión 1.0.0
 
