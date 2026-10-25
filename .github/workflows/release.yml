@@ -1,0 +1,81 @@
+name: Comprobar y publicar versión
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atril-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Incorporar fuentes iniciales si están pendientes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f atril-source-v1.0.0.zip; then
+            printf '%s  %s\n' '80877353be8d65b5101de8f0703e586ae058f8faf419fa2741dc93e8379f219b' 'atril-source-v1.0.0.zip' | sha256sum -c -
+            unpack_dir=$(mktemp -d)
+            unzip -q atril-source-v1.0.0.zip -d "$unpack_dir"
+            cp -a "$unpack_dir/atril-teleprompter-1.0.0/." .
+            git add atril.py core.py assets docs packaging tests README.md LICENSE THIRD_PARTY.md CHANGELOG.md .gitignore
+            git rm atril-source-v1.0.0.zip
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Publicar fuentes completas de Atril Teleprónter 1.0.0'
+            git push origin HEAD:main
+          fi
+
+      - name: Instalar herramientas de pruebas y empaquetado
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pyqt5 rpm desktop-file-utils
+
+      - name: Comprobar la aplicación y su lanzador
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python3 -m unittest discover -s tests -v
+          python3 atril.py --version
+          desktop-file-validate packaging/es.compilando.AtrilTeleprompter.desktop
+
+      - name: Construir DEB y RPM desde las mismas fuentes
+        run: |
+          python3 packaging/build_deb.py
+          python3 packaging/build_rpm.py
+          dpkg-deb --info dist/atril-teleprompter_1.0.0_all.deb
+          rpm -qip dist/atril-teleprompter-1.0.0-1.noarch.rpm
+          rpm -qpR dist/atril-teleprompter-1.0.0-1.noarch.rpm
+          cd dist
+          sha256sum atril-teleprompter_1.0.0_all.deb atril-teleprompter-1.0.0-1.noarch.rpm > SHA256SUMS.txt
+          sha256sum -c SHA256SUMS.txt
+
+      - name: Publicar la primera release sin sustituir versiones existentes
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(python3 -c 'from core import VERSION; print(VERSION)')
+          tag="v$version"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "La release $tag ya existe. No se modifica."
+            exit 0
+          fi
+          gh release create "$tag" \
+            "dist/atril-teleprompter_${version}_all.deb" \
+            "dist/atril-teleprompter-${version}-1.noarch.rpm" \
+            dist/SHA256SUMS.txt \
+            --target "$(git rev-parse HEAD)" \
+            --title "Atril Teleprónter $version" \
+            --notes-file "docs/releases/$tag.md"
