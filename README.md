@@ -10,10 +10,10 @@ Una aplicación de escritorio para locuciones, vídeos, presentaciones y pódcas
 
 | Plataforma | Release |
 | --- | --- |
-| GitHub | [Descargar .deb y .rpm](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v1.0.0) |
+| GitHub | [Descargar .deb, .rpm y Arch Linux](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v1.0.0) |
 | GitLab | [Descargar .deb y .rpm](https://gitlab.com/PacoEstrada/atril-teleprompter/-/releases/v1.0.0) |
 
-Descarga `.deb` para Linux Mint, Ubuntu y Debian, o `.rpm` para Fedora. Los paquetes llevan las mismas fuentes. Las releases incluyen `SHA256SUMS.txt` para comprobar la integridad de los instaladores.
+Descarga `.deb` para Linux Mint, Ubuntu y Debian, `.rpm` para Fedora o `.pkg.tar.zst` para Arch Linux. Los paquetes llevan las mismas fuentes de la versión 1.0.0. `SHA256SUMS.txt` comprueba DEB/RPM y `SHA256SUMS-arch.txt` los archivos de Arch.
 
 ## Instalar en Linux Mint, Ubuntu o Debian
 
@@ -34,6 +34,34 @@ sudo dnf install ./atril-teleprompter-1.0.0-1.noarch.rpm
 ```
 
 El RPM declara las dependencias `python3` y `python3-qt5`. Está preparado para Fedora; no se afirma compatibilidad con todas las distribuciones que usan RPM. No se convierte a partir del paquete Debian.
+
+## Instalar en Arch Linux
+
+Descarga `atril-teleprompter-1.0.0-1-any.pkg.tar.zst` desde la
+[release de GitHub](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v1.0.0).
+Desde la carpeta de descarga, con Arch actualizado:
+
+```bash
+sudo pacman -Syu
+sudo pacman -U ./atril-teleprompter-1.0.0-1-any.pkg.tar.zst
+```
+
+El paquete está construido de forma nativa con `makepkg`. Pacman instala
+Python y PyQt5 si faltan. También puedes reconstruirlo e instalarlo con la
+receta incluida en el repositorio:
+
+```bash
+sudo pacman -Syu --needed base-devel git
+git clone https://github.com/pacoestrada/atril-teleprompter.git
+cd atril-teleprompter/packaging/arch
+less PKGBUILD
+makepkg -si
+```
+
+Ejecuta `makepkg` sin `sudo`. La receta verifica las fuentes de la versión
+1.0.0 y ejecuta las pruebas antes de generar el paquete. No está publicada
+en AUR. Consulta las [instrucciones de Arch](packaging/arch/README.md) para
+instalar un paquete ya construido, comprobarlo o desinstalarlo.
 
 ## Empezar
 
@@ -114,6 +142,8 @@ python3 packaging/build_rpm.py
 Las pruebas cubren importación, caracteres españoles, límites de archivos, rechazo de entidades XML, recuperación de sesiones, reproducción y pausa, cuenta atrás, atajos, edición sin interferencias, recuperación del guion anterior y disposición en pantalla de portátil. La revisión visual se realiza con Qt en modo de pruebas; la comprobación final en una sesión real de Linux Mint, con su compositor y sus monitores, queda pendiente de uso.
 
 Para construir el RPM se necesita `rpmbuild` (paquete `rpm-build` en Fedora o `rpm` en Ubuntu). El proceso de publicación de GitHub ejecuta las pruebas, construye ambos paquetes desde el mismo commit y adjunta sus sumas SHA-256. La publicación se inicia manualmente desde Actions y no sustituye una release existente.
+
+La construcción de Arch se ejecuta en un contenedor Arch Linux: verifica las fuentes, ejecuta las 23 pruebas, instala el paquete con `pacman` y repite las pruebas sobre los archivos instalados. Después añade el paquete y sus sumas a la release 1.0.0 sin reemplazar los DEB/RPM. La prueba de lectura en un escritorio Arch real sigue pendiente.
 
 ## Autoría y licencia
 
