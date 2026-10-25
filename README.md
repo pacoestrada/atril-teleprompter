@@ -11,7 +11,7 @@ Una aplicación de escritorio para locuciones, vídeos, presentaciones y pódcas
 | Plataforma | Release |
 | --- | --- |
 | GitHub | [Descargar .deb, .rpm y Arch Linux](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v1.0.0) |
-| GitLab | [Descargar .deb y .rpm](https://gitlab.com/PacoEstrada/atril-teleprompter/-/releases/v1.0.0) |
+| GitLab | [Descargar .deb, .rpm y Arch Linux](https://gitlab.com/PacoEstrada/atril-teleprompter/-/releases/v1.0.0) |
 
 Descarga `.deb` para Linux Mint, Ubuntu y Debian, `.rpm` para Fedora o `.pkg.tar.zst` para Arch Linux. Los paquetes llevan las mismas fuentes de la versión 1.0.0. `SHA256SUMS.txt` comprueba DEB/RPM y `SHA256SUMS-arch.txt` los archivos de Arch.
 
@@ -38,7 +38,8 @@ El RPM declara las dependencias `python3` y `python3-qt5`. Está preparado para 
 ## Instalar en Arch Linux
 
 Descarga `atril-teleprompter-1.0.0-1-any.pkg.tar.zst` desde la
-[release de GitHub](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v1.0.0).
+[release de GitHub](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v1.0.0)
+o la [release de GitLab](https://gitlab.com/PacoEstrada/atril-teleprompter/-/releases/v1.0.0).
 Desde la carpeta de descarga, con Arch actualizado:
 
 ```bash
