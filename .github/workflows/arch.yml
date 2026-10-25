@@ -1,0 +1,84 @@
+name: Comprobar y publicar paquete Arch Linux
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'packaging/arch/**'
+      - '.github/workflows/arch.yml'
+  pull_request:
+    paths:
+      - 'packaging/arch/**'
+      - '.github/workflows/arch.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: atril-arch-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  arch:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construir, instalar y comprobar en Arch Linux
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          docker run --rm -v "$PWD:/project" -w /project archlinux:base-devel bash -euc '
+            pacman -Syu --noconfirm --needed python python-pyqt5 desktop-file-utils ttf-dejavu
+            useradd -m builder
+            install -d -o builder -g builder /tmp/atril-build
+            cp packaging/arch/PKGBUILD /tmp/atril-build/
+            chown builder:builder /tmp/atril-build/PKGBUILD
+            su builder -c "cd /tmp/atril-build && makepkg --printsrcinfo" > /tmp/SRCINFO
+            diff -u packaging/arch/.SRCINFO /tmp/SRCINFO
+            su builder -c "cd /tmp/atril-build && makepkg --cleanbuild --noconfirm"
+            pacman -U --noconfirm /tmp/atril-build/*.pkg.tar.zst
+            su builder -c "bash /project/packaging/arch/check-installed.sh"
+            cp /tmp/atril-build/*.pkg.tar.zst /project/dist/
+          '
+          cp packaging/arch/PKGBUILD packaging/arch/.SRCINFO dist/
+          cp packaging/arch/README.md dist/ARCH-INSTALL.md
+          cd dist
+          sha256sum ./*.pkg.tar.zst PKGBUILD .SRCINFO ARCH-INSTALL.md > SHA256SUMS-arch.txt
+          sha256sum -c SHA256SUMS-arch.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: atril-arch
+          path: dist/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  publish:
+    needs: arch
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: atril-arch
+          path: dist
+
+      - name: Añadir Arch a la release existente sin reemplazar sus archivos
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(bash -c 'source packaging/arch/PKGBUILD; printf "%s" "$pkgver"')
+          tag="v$version"
+          gh release view "$tag" >/dev/null
+          # No --clobber: an existing package is never silently replaced.
+          gh release upload "$tag" dist/*.pkg.tar.zst dist/PKGBUILD dist/.SRCINFO \
+            dist/ARCH-INSTALL.md dist/SHA256SUMS-arch.txt
