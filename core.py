@@ -10,7 +10,7 @@ import tempfile
 import zipfile
 import xml.etree.ElementTree as ET
 
-VERSION = "1.0.0"
+VERSION = "1.2.0"
 MAX_TEXT = 1_000_000
 MAX_FILE = 8_000_000
 DEFAULTS = {"speed": 44, "font_size": 42, "width": 86, "spacing": 145,

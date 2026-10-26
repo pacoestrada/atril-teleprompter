@@ -1,6 +1,6 @@
 pkgbase = atril-teleprompter
 	pkgdesc = Offline teleprompter for scripts, videos and podcasts by Paco Estrada / Compilando
-	pkgver = 1.0.0
+	pkgver = 1.2.0
 	pkgrel = 1
 	url = https://github.com/pacoestrada/atril-teleprompter
 	arch = any
@@ -9,8 +9,10 @@ pkgbase = atril-teleprompter
 	checkdepends = ttf-dejavu
 	depends = python>=3.10
 	depends = python-pyqt5>=5.15
+	depends = qt5-multimedia
+	depends = ffmpeg
 	optdepends = ttf-dejavu: preferred font for the interface and reading area
-	source = atril-teleprompter-1.0.0.tar.gz::https://github.com/pacoestrada/atril-teleprompter/archive/refs/tags/v1.0.0.tar.gz
-	sha256sums = e992b41d9847a421c5bfe2200e3abb3163e939e5f0861dc359233b91401b46b3
+	source = atril-teleprompter-1.2.0.tar.gz::https://github.com/pacoestrada/atril-teleprompter/releases/download/v1.2.0/atril-teleprompter-1.2.0.tar.gz
+	sha256sums = ef5e3d45e046156019b76b35d199bbfac645ec95644f969892e4a80896ef48f1
 
 pkgname = atril-teleprompter

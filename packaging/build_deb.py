@@ -17,7 +17,7 @@ def build(output):
         stage = Path(temp)
         app = stage / "usr/share/atril-teleprompter"
         app.mkdir(parents=True)
-        for name in ("atril.py", "core.py"):
+        for name in ("atril.py", "core.py", "audio_core.py", "audio_capture.py", "audio_widgets.py"):
             shutil.copy2(ROOT/name, app/name)
         shutil.copytree(ROOT/"assets", app/"assets")
         executable = stage / "usr/bin/atril-teleprompter"
@@ -39,7 +39,7 @@ def build(output):
             f"Package: atril-teleprompter\nVersion: {VERSION}\nSection: video\nPriority: optional\n"
             f"Architecture: all\nInstalled-Size: {size}\n"
             "Maintainer: Paco Estrada\n"
-            "Depends: python3 (>= 3.10), python3-pyqt5 (>= 5.15)\n"
+            "Depends: python3 (>= 3.10), python3-pyqt5 (>= 5.15), python3-pyqt5.qtmultimedia, libqt5multimedia5-plugins, ffmpeg\n"
             "Homepage: https://compilando.es\n"
             "Description: Telepronter de escritorio de Paco Estrada\n"
             " Aplicacion local para leer guiones con desplazamiento suave, teclado,\n"

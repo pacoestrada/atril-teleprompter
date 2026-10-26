@@ -2,11 +2,6 @@ name: Comprobar y publicar paquete Arch Linux
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'packaging/arch/**'
-      - '.github/workflows/arch.yml'
   pull_request:
     paths:
       - 'packaging/arch/**'
@@ -32,7 +27,7 @@ jobs:
           set -euo pipefail
           mkdir -p dist
           docker run --rm -v "$PWD:/project" -w /project archlinux:base-devel bash -euc '
-            pacman -Syu --noconfirm --needed python python-pyqt5 desktop-file-utils ttf-dejavu
+            pacman -Syu --noconfirm --needed python python-pyqt5 qt5-multimedia ffmpeg desktop-file-utils ttf-dejavu
             useradd -m builder
             install -d -o builder -g builder /tmp/atril-build
             cp packaging/arch/PKGBUILD /tmp/atril-build/

@@ -10,7 +10,7 @@ import time
 import zipfile
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtCore import Qt, QTimer, QRectF, QPointF, pyqtSignal
+from PyQt5.QtCore import Qt, QTimer, QRectF, QPointF, pyqtSignal, QLibraryInfo, QLocale, QTranslator
 from PyQt5.QtGui import (QColor, QFont, QIcon, QKeySequence, QPainter, QPalette,
                          QPixmap, QPolygonF, QTextBlockFormat, QTextCursor,
                          QTextDocument, QTextOption, QAbstractTextDocumentLayout)
@@ -21,6 +21,8 @@ from PyQt5.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog,
 
 from core import (DEFAULTS, DEMO, VERSION, atomic_write, clean_settings,
                   import_document, load_session, save_session, validate_text, word_count)
+
+from audio_widgets import RecorderBar
 
 ROOT = Path(__file__).resolve().parent
 ASSETS = ROOT / "assets"
@@ -39,6 +41,11 @@ QLabel#section { color: #c3a8ff; font-weight: 700; font-size: 11px; }
 QLabel#value { color: #66e5d7; font-weight: 700; }
 QLabel#status { background: #263249; color: #9debe2; border-radius: 10px; padding: 6px 12px; font-size: 11px; font-weight: 700; }
 QFrame#panel, QFrame#transport { background: #192132; border: 1px solid #2a354e; border-radius: 14px; }
+QFrame#recorder { background: #182336; border: 1px solid #4b617d; border-radius: 12px; }
+QPushButton#audioButton { padding: 5px 8px; font-size: 12px; }
+QPushButton#audioButton:checked { background: #38685f; border-color: #62e4ce; }
+QPushButton#recordButton { background: #b34462; border-color: #e47893; padding: 5px 10px; font-size: 12px; }
+QPushButton#recordButton:disabled { background: #3c2839; color: #8d7785; border-color: #544052; }
 QFrame#scriptbar { background: #192132; border-radius: 10px; }
 QFrame#shortcuts { background: #151d2d; border: 1px solid #2a354e; border-radius: 10px; }
 QPushButton { background: #28334b; border: 1px solid #3a4864; border-radius: 9px; padding: 9px 13px; font-weight: 600; }
@@ -62,6 +69,12 @@ QCheckBox::indicator:checked { background: #62e4ce; border: 4px solid #24685f; }
 QComboBox { background: #273249; border: 1px solid #40506d; border-radius: 7px; padding: 7px; min-height: 18px; }
 QComboBox:focus { border-color: #62e4ce; }
 QComboBox QAbstractItemView { background: #273249; selection-background-color: #6553a2; color: #ffffff; }
+QFileDialog QTreeView, QFileDialog QListView { background: #111a2b; color: #e9edf7; border: 1px solid #40506d; border-radius: 6px; selection-background-color: #586795; selection-color: #ffffff; }
+QFileDialog QListView#sidebar { min-width: 140px; }
+QFileDialog QHeaderView { background: #273249; }
+QFileDialog QHeaderView::section { background: #273249; color: #cdd7ed; padding: 7px; border: 0; border-right: 1px solid #40506d; }
+QFileDialog QLineEdit { background: #111a2b; color: #f2f5fc; border: 1px solid #526584; border-radius: 6px; padding: 7px; selection-background-color: #6553a2; selection-color: #ffffff; }
+QFileDialog QTreeView::item, QFileDialog QListView::item { padding: 4px; }
 QPlainTextEdit { background: #0c1220; color: #f2f3f8; border: 1px solid #3e4c68; border-radius: 10px; padding: 12px; font-size: 18px; selection-background-color: #6954a8; }
 QScrollArea { background: transparent; border: 0; }
 QScrollBar:vertical { background: #182134; width: 8px; margin: 0; }
@@ -103,7 +116,7 @@ class ReadingCanvas(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.setMinimumSize(250, 150)
+        self.setMinimumSize(250, 100)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.setFocusPolicy(Qt.StrongFocus)
         self.setAccessibleName("Zona de lectura. Clic para iniciar o pausar; rueda para desplazarse.")
@@ -339,24 +352,24 @@ class AtrilWindow(QMainWindow):
         self.periodic_save.start(5000)
         screen = QApplication.primaryScreen().availableGeometry()
         self.resize(min(1280, screen.width()-40), min(860, screen.height()-60))
-        self.setMinimumSize(680, 480)
+        self.setMinimumSize(740, 650)
         self.move(screen.x() + (screen.width()-self.width())//2,
                   screen.y() + (screen.height()-self.height())//2)
         QTimer.singleShot(0, self.restore_position)
 
     def build_ui(self):
         main = QWidget(); self.setCentralWidget(main)
-        root = QVBoxLayout(main); root.setContentsMargins(18, 14, 18, 12); root.setSpacing(12)
+        root = QVBoxLayout(main); root.setContentsMargins(14, 10, 14, 10); root.setSpacing(8)
         header = QFrame(); header.setObjectName("header")
         row = QHBoxLayout(header); row.setContentsMargins(16, 10, 16, 10); row.setSpacing(14)
-        icon = QLabel(); icon.setPixmap(QPixmap(str(ASSETS / "atril.png")).scaled(68, 68, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        icon = QLabel(); icon.setPixmap(QPixmap(str(ASSETS / "atril.png")).scaled(54, 54, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         row.addWidget(icon)
         identity = QVBoxLayout(); identity.setSpacing(0)
         identity.addWidget(label("ATRIL", "brand"))
         identity.addWidget(label("TELEPRÓNTER · PACO ESTRADA", "eyebrow"))
         row.addLayout(identity); row.addStretch()
         self.tagline = label("Tu voz. Tu ritmo.", "muted"); row.addWidget(self.tagline)
-        logo = QLabel(); logo.setPixmap(QPixmap(str(ASSETS / "compilando-podcast-logo.jpg")).scaled(72, 72, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        logo = QLabel(); logo.setPixmap(QPixmap(str(ASSETS / "compilando-podcast-logo.jpg")).scaled(58, 58, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         logo.setAccessibleName("Logo de Compilando Podcast"); logo.setToolTip("Compilando Podcast · Paco Estrada")
         row.addWidget(logo)
         root.addWidget(header)
@@ -444,6 +457,9 @@ class AtrilWindow(QMainWindow):
         self.info_label = label("", "muted"); layout.addWidget(self.info_label)
         root.addWidget(transport)
 
+        self.recorder_bar = RecorderBar(self.session_path.parent / "grabaciones-pendientes", self)
+        root.addWidget(self.recorder_bar)
+
         shortcuts = QFrame(); shortcuts.setObjectName("shortcuts")
         keys = QGridLayout(shortcuts); keys.setContentsMargins(12, 8, 12, 8); keys.setHorizontalSpacing(16); keys.setVerticalSpacing(5)
         for i, (key, action) in enumerate([("ESPACIO", "iniciar / pausar"), ("↑  ↓", "velocidad"),
@@ -465,6 +481,7 @@ class AtrilWindow(QMainWindow):
 
     def create_shortcuts(self):
         self.shortcuts = []
+        self.reading_shortcuts = []
         bindings = {"Space": self.toggle, "F11": self.toggle_fullscreen, "Escape": self.escape,
             "Home": self.reset, "End": lambda: self.jump(1.), "C": self.toggle_controls,
             "M": lambda: self.mirror_check.setChecked(not self.mirror_check.isChecked()),
@@ -478,12 +495,22 @@ class AtrilWindow(QMainWindow):
             "=": lambda: self.sliders["font_size"].setValue(self.settings["font_size"]+2),
             "-": lambda: self.sliders["font_size"].setValue(self.settings["font_size"]-2),
             "Ctrl+O": self.open_dialog, "Ctrl+E": self.edit_script, "Ctrl+S": self.export_text,
+            "Ctrl+R": self.recorder_bar.record_shortcut, "Ctrl+Shift+R": self.recorder_bar.recorder.stop,
+            "Ctrl+Alt+S": self.recorder_bar.save,
             "Ctrl+Shift+S": self.export_session, "Ctrl+N": self.new_script, "F1": self.help_dialog}
         for key, action in bindings.items():
             shortcut = QShortcut(QKeySequence(key), self); shortcut.setContext(Qt.WindowShortcut)
             shortcut.activated.connect(action)
             shortcut.setAutoRepeat(key in ("Up", "Down", "Left", "Right", "+", "-", "="))
             self.shortcuts.append(shortcut)
+            if key not in ("F11", "Escape", "F1") and not key.startswith("Ctrl+"):
+                self.reading_shortcuts.append(shortcut)
+        QApplication.instance().focusChanged.connect(self.audio_focus_changed)
+
+    def audio_focus_changed(self, old, current):
+        inside_audio = current is not None and (current == self.recorder_bar or self.recorder_bar.isAncestorOf(current))
+        for shortcut in self.reading_shortcuts:
+            shortcut.setEnabled(not inside_audio)
 
     def sync_controls(self):
         for key, widget in self.sliders.items():
@@ -758,12 +785,12 @@ class AtrilWindow(QMainWindow):
         view = QPlainTextEdit(); view.setReadOnly(True)
         view.setStyleSheet("QPlainTextEdit {font-size: 14px;}")
         view.setPlainText("ATRIL TELEPRÓNTER · " + VERSION + "\nPaco Estrada · Compilando Podcast\n\n"
-            "ESPACIO / clic en el texto  Iniciar o pausar\n↑ / ↓  Aumentar o reducir velocidad\n← / →  Retroceder o avanzar una línea\nAvPág / RePág  Mover una pantalla\n+ / −  Cambiar tamaño de letra\nInicio / Fin  Ir al inicio o al final\nRueda  Mover el guion y pausar\nF11  Entrar o salir de pantalla completa\nEsc  Pausar y salir de pantalla completa\nC  Mostrar u ocultar ajustes\nM  Invertir el texto para un cristal\nCtrl+E  Editar o pegar guion\nCtrl+O  Abrir guion o sesión\nCtrl+S  Guardar guion como TXT\nCtrl+Mayús+S  Guardar sesión .atril\nCtrl+N  Crear guion vacío\nF1  Mostrar esta ayuda\n\n"
+            "ESPACIO / clic en el texto  Iniciar o pausar\n↑ / ↓  Aumentar o reducir velocidad\n← / →  Retroceder o avanzar una línea\nAvPág / RePág  Mover una pantalla\n+ / −  Cambiar tamaño de letra\nInicio / Fin  Ir al inicio o al final\nRueda  Mover el guion y pausar\nF11  Entrar o salir de pantalla completa\nEsc  Pausar y salir de pantalla completa\nC  Mostrar u ocultar ajustes\nM  Invertir el texto para un cristal\nCtrl+E  Editar o pegar guion\nCtrl+O  Abrir guion o sesión\nCtrl+S  Guardar guion como TXT\nCtrl+Mayús+S  Guardar sesión .atril\nCtrl+N  Crear guion vacío\nCtrl+R  Grabar / pausar / reanudar audio\nCtrl+Mayús+R  Detener audio\nCtrl+Alt+S  Guardar grabación\nF1  Mostrar esta ayuda\n\n"
             "La cuenta atrás se usa al comenzar desde el inicio. Al reanudar una pausa, el texto continúa inmediatamente.\n\n"
             "La velocidad se expresa en píxeles lógicos por segundo. El tiempo restante es orientativo y depende del tamaño de letra, el ancho y el ritmo.\n\n"
             "TXT y MD se leen como texto. DOCX y ODT se importan sin formato; no se muestran imágenes, notas ni comentarios.\n\n"
             "El guion, ajustes y posición se guardan automáticamente en este ordenador. Una sesión .atril permite llevarlos a otro equipo. No hay sincronización en la nube.\n\n"
-            "Atril desplaza el texto a velocidad fija; no escucha tu voz ni graba audio o vídeo.\n\n"
+            "Atril desplaza el texto a velocidad fija; no sigue tu voz ni graba vídeo. La grabadora de audio es independiente de la lectura. Espacio y Esc no detienen el audio. Usa Ctrl+Mayús+R para terminar la toma.\n\nSelecciona la entrada y pulsa Probar micro para comprobar niveles. La ganancia es digital: 0 dB conserva el nivel. Evita el aviso de saturación. Al detener, Guardar grabación permite elegir carpeta y WAV, FLAC o MP3. WAV y FLAC conservan el audio; MP3 usa compresión con pérdida.\n\nMientras grabas se conserva una copia WAV local. Si la aplicación se interrumpe, usa Recuperar en la banda de audio. La forma de onda muestra los últimos cinco segundos. La toma completa se guarda en disco.\n\n"
             "Software libre · GPL-3.0-or-later\nLogo de Compilando Podcast: su titular.")
         outer.addWidget(view, 1)
         outer.addWidget(button("Listo", dialog.accept, name="primary")); dialog.exec_()
@@ -775,6 +802,8 @@ class AtrilWindow(QMainWindow):
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if reply != QMessageBox.Yes:
                 event.ignore(); return
+        if not self.recorder_bar.request_close():
+            event.ignore(); return
         event.accept()
 
 
@@ -791,6 +820,9 @@ def main():
     QApplication.setOrganizationName("Paco Estrada")
     QApplication.setDesktopFileName("es.compilando.AtrilTeleprompter")
     app = QApplication(sys.argv)
+    translator = QTranslator(app)
+    translator.load(QLocale.system(), "qtbase", "_", QLibraryInfo.location(QLibraryInfo.TranslationsPath))
+    app.installTranslator(translator)
     app.setStyle("Fusion"); app.setStyleSheet(STYLE)
     window = AtrilWindow(); window.show()
     if args.guion:

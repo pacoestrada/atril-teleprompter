@@ -1,5 +1,5 @@
 Name:           atril-teleprompter
-Version:        1.0.0
+Version:        1.2.0
 Release:        1
 Summary:        Offline desktop teleprompter by Paco Estrada
 License:        GPL-3.0-or-later
@@ -8,13 +8,16 @@ Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
 Requires:       python3 >= 3.10
 Requires:       python3-qt5 >= 5.15
+Requires:       qt5-qtmultimedia
+Requires:       /usr/bin/ffmpeg
 
 %global __brp_python_bytecompile %{nil}
 
 %description
 Atril Teleprompter is an offline desktop application for reading scripts.
 It includes smooth scrolling, keyboard and mouse controls, fullscreen,
-mirroring, document import and session recovery. Paco Estrada / Compilando.
+mirroring, document import, session recovery and voice recording.
+Includes live meters, waveform, digital gain and WAV/FLAC/MP3 export. Paco Estrada / Compilando.
 
 %prep
 %setup -q
@@ -24,7 +27,7 @@ mirroring, document import and session recovery. Paco Estrada / Compilando.
 
 %install
 install -d %{buildroot}%{_datadir}/%{name}/assets
-install -m 0644 atril.py core.py %{buildroot}%{_datadir}/%{name}/
+install -m 0644 atril.py core.py audio_core.py audio_capture.py audio_widgets.py %{buildroot}%{_datadir}/%{name}/
 install -m 0644 assets/atril.png assets/compilando-podcast-logo.jpg %{buildroot}%{_datadir}/%{name}/assets/
 install -d %{buildroot}%{_bindir}
 printf '#!/bin/sh\nexec /usr/bin/python3 /usr/share/atril-teleprompter/atril.py "$@"\n' > %{buildroot}%{_bindir}/%{name}
@@ -41,5 +44,14 @@ install -Dm 0644 assets/atril.png %{buildroot}%{_datadir}/pixmaps/es.compilando.
 %{_datadir}/pixmaps/es.compilando.AtrilTeleprompter.png
 
 %changelog
+* Mon Oct 26 2026 Paco Estrada - 1.2.0-1
+- Voice recording, input selection, meters and WAV/FLAC/MP3 export.
+
+* Mon Oct 26 2026 Paco Estrada - 1.1.1-1
+- Handle empty native audio filters and normalize recording filenames.
+
+* Sun Oct 25 2026 Paco Estrada - 1.1.0-1
+- Integrated voice recorder with recoverable takes and WAV/FLAC/MP3 export.
+
 * Sun Oct 25 2026 Paco Estrada - 1.0.0-1
 - First release of Atril Teleprompter.

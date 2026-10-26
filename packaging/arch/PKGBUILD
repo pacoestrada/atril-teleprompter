@@ -1,16 +1,16 @@
 # Maintainer: Paco Estrada
 pkgname=atril-teleprompter
-pkgver=1.0.0
+pkgver=1.2.0
 pkgrel=1
 pkgdesc='Offline teleprompter for scripts, videos and podcasts by Paco Estrada / Compilando'
 arch=('any')
 url='https://github.com/pacoestrada/atril-teleprompter'
 license=('GPL-3.0-or-later')
-depends=('python>=3.10' 'python-pyqt5>=5.15')
+depends=('python>=3.10' 'python-pyqt5>=5.15' 'qt5-multimedia' 'ffmpeg')
 checkdepends=('desktop-file-utils' 'ttf-dejavu')
 optdepends=('ttf-dejavu: preferred font for the interface and reading area')
-source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('e992b41d9847a421c5bfe2200e3abb3163e939e5f0861dc359233b91401b46b3')
+source=("${pkgname}-${pkgver}.tar.gz::${url}/releases/download/v${pkgver}/${pkgname}-${pkgver}.tar.gz")
+sha256sums=('ef5e3d45e046156019b76b35d199bbfac645ec95644f969892e4a80896ef48f1')
 
 check() {
     cd "${pkgname}-${pkgver}"
@@ -21,7 +21,7 @@ check() {
 
 package() {
     cd "${pkgname}-${pkgver}"
-    install -Dm644 atril.py core.py -t "${pkgdir}/usr/share/${pkgname}"
+    install -Dm644 atril.py core.py audio_core.py audio_capture.py audio_widgets.py -t "${pkgdir}/usr/share/${pkgname}"
     install -Dm644 assets/atril.png assets/compilando-podcast-logo.jpg \
         -t "${pkgdir}/usr/share/${pkgname}/assets"
     install -Dm644 packaging/es.compilando.AtrilTeleprompter.desktop \
