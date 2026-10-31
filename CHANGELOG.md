@@ -1,5 +1,11 @@
 # Historial de cambios
 
+## 2.1.0 — 31 de octubre de 2026
+
+- Vúmetro analógico simulado con esfera iluminada en tono cálido, escala VU y aguja con inercia.
+- Piloto rojo de saturación independiente de la aguja y lectura de pico en dBFS.
+- Referencia visual de 0 VU = −18 dBFS RMS; sin cambios en la captura, ganancia ni exportación de audio.
+
 ## 1.2.0 — 26 de octubre de 2026
 
 - Grabación local de voz integrada con selección de entrada, prueba de micrófono y ganancia digital.

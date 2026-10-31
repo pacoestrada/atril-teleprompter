@@ -2,6 +2,11 @@ name: Comprobar y publicar versión
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - core.py
+      - .github/workflows/release.yml
 
 permissions:
   contents: write
@@ -59,11 +64,12 @@ jobs:
             su builder -c "bash /project/packaging/arch/check-installed.sh"
             cp /tmp/atril-build/*.pkg.tar.zst /project/dist/
           '
-          cp packaging/arch/PKGBUILD packaging/arch/.SRCINFO dist/
+          cp packaging/arch/PKGBUILD dist/
+          cp packaging/arch/.SRCINFO dist/SRCINFO
           cp packaging/arch/README.md dist/ARCH-INSTALL.md
-          cp docs/atril-grabacion-voz.png dist/
+          cp docs/atril-vumetro-analogico.png docs/atril-vumetro-analogico.gif dist/
           cd dist
-          sha256sum *.deb *.rpm *.pkg.tar.zst *.tar.gz PKGBUILD .SRCINFO ARCH-INSTALL.md atril-grabacion-voz.png > SHA256SUMS.txt
+          sha256sum *.deb *.rpm *.pkg.tar.zst *.tar.gz PKGBUILD SRCINFO ARCH-INSTALL.md atril-vumetro-analogico.png atril-vumetro-analogico.gif > SHA256SUMS.txt
           sha256sum -c SHA256SUMS.txt
 
       - uses: actions/upload-artifact@v4
@@ -85,7 +91,8 @@ jobs:
             echo "La release $tag ya existe. No se modifica."
             exit 0
           fi
-          gh release create "$tag" dist/* dist/.SRCINFO \
+          title=$(python3 -c 'from pathlib import Path; from core import VERSION; print(Path(f"docs/releases/v{VERSION}.md").read_text().splitlines()[0].removeprefix("# "))')
+          gh release create "$tag" dist/* \
             --target "$(git rev-parse HEAD)" \
-            --title "Atril Teleprónter $version · Grabación de voz" \
+            --title "$title" \
             --notes-file "docs/releases/$tag.md"

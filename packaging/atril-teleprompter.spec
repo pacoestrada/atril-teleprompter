@@ -1,5 +1,5 @@
 Name:           atril-teleprompter
-Version:        1.2.0
+Version:        2.1.0
 Release:        1
 Summary:        Offline desktop teleprompter by Paco Estrada
 License:        GPL-3.0-or-later
@@ -44,6 +44,9 @@ install -Dm 0644 assets/atril.png %{buildroot}%{_datadir}/pixmaps/es.compilando.
 %{_datadir}/pixmaps/es.compilando.AtrilTeleprompter.png
 
 %changelog
+* Sat Oct 31 2026 Paco Estrada - 2.1.0-1
+- Warm backlit analog VU meter with smooth needle and clipping indicator.
+
 * Mon Oct 26 2026 Paco Estrada - 1.2.0-1
 - Voice recording, input selection, meters and WAV/FLAC/MP3 export.
 

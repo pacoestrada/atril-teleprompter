@@ -1,7 +1,7 @@
 # Atril Teleprónter para Arch Linux
 
-Paquete nativo `atril-teleprompter-1.2.0-1-any.pkg.tar.zst`, construido con
-`makepkg` a partir de las fuentes de la versión 1.2.0. No convierte el DEB ni
+Paquete nativo `atril-teleprompter-2.1.0-1-any.pkg.tar.zst`, construido con
+`makepkg` a partir de las fuentes de la versión 2.1.0. No convierte el DEB ni
 el RPM. El nombre `atril-teleprompter` evita conflictos con el visor Atril.
 
 ## Instalar el paquete descargado
@@ -10,7 +10,7 @@ Desde la carpeta de descarga, con Arch actualizado:
 
 ```bash
 sudo pacman -Syu
-sudo pacman -U ./atril-teleprompter-1.2.0-1-any.pkg.tar.zst
+sudo pacman -U ./atril-teleprompter-2.1.0-1-any.pkg.tar.zst
 ```
 
 Pacman resuelve las dependencias `python`, `python-pyqt5`, `qt5-multimedia` y `ffmpeg` desde los

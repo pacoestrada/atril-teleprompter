@@ -4,33 +4,35 @@
 
 Una aplicación de escritorio para locuciones, vídeos, presentaciones y pódcast. Funciona sin conexión, con letra grande, desplazamiento suave y controles de teclado y ratón. Los atajos más utilizados siguen visibles durante la lectura y en pantalla completa.
 
-## Novedades de la versión 1.2.0
+## Novedades de la versión 2.1.0
 
-Atril permite **grabar la voz mientras lees el guion**, desde la misma aplicación. Elige la entrada de audio del equipo, prueba el micrófono y ajusta la ganancia antes de grabar. El vúmetro, la forma de onda y el contador ayudan a seguir la toma.
+Un pequeño guiño a las mesas de radio clásicas: el vúmetro ahora tiene **aguja con inercia, iluminación amarillenta y escala VU**. El piloto rojo avisa de saturación al instante y la lectura inferior conserva el pico en dBFS.
 
-**Guarda en WAV, FLAC o MP3**, con el nombre y la carpeta que prefieras. Puedes pausar, reanudar y detener el audio de forma independiente a la lectura, con el ratón o los atajos de teclado.
+La serie 2.x se dedica a mejoras visuales. Esta versión mantiene las funciones de lectura y grabación: selección de entrada, prueba de micrófono, ganancia, forma de onda y guardado en **WAV, FLAC o MP3**.
 
-Esta función nace de una necesidad de Paco Estrada para sus locuciones y pódcast: tener la lectura y la grabación juntas para simplificar el trabajo. La pista guardada puede llevarse después al editor habitual para añadir música, filtros, efectos o compresión.
+![Movimiento del vúmetro analógico](docs/atril-vumetro-analogico.gif)
 
-![Atril grabando voz en Linux Mint](docs/atril-grabacion-voz.png)
+Demostración del medidor con niveles simulados.
 
-Captura de uso real en Linux Mint. Seguiremos mejorando la aplicación y puliendo detalles.
+![Atril con el nuevo vúmetro analógico](docs/atril-vumetro-analogico.png)
 
-## Descargas de la versión 1.2.0
+Vista de la aplicación. El medidor es ligeramente más alto para que la escala resulte legible.
+
+## Descargas de la versión 2.1.0
 
 | Plataforma | Release |
 | --- | --- |
-| GitHub | [Descargar .deb, .rpm y Arch Linux](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v1.2.0) |
-| GitLab | [Descargar .deb, .rpm y Arch Linux](https://gitlab.com/PacoEstrada/atril-teleprompter/-/releases/v1.2.0) |
+| GitHub | [Descargar .deb, .rpm y Arch Linux](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v2.1.0) |
+| GitLab | [Descargar .deb, .rpm y Arch Linux](https://gitlab.com/PacoEstrada/atril-teleprompter/-/releases/v2.1.0) |
 
-Descarga `.deb` para Linux Mint, Ubuntu y Debian, `.rpm` para Fedora o `.pkg.tar.zst` para Arch Linux. Los paquetes llevan las mismas fuentes de la versión 1.2.0. `SHA256SUMS.txt` permite comprobar los paquetes y las fuentes descargados.
+Descarga `.deb` para Linux Mint, Ubuntu y Debian, `.rpm` para Fedora o `.pkg.tar.zst` para Arch Linux. Los paquetes llevan las mismas fuentes de la versión 2.1.0. `SHA256SUMS.txt` permite comprobar los paquetes y las fuentes descargados.
 
 ## Instalar en Linux Mint, Ubuntu o Debian
 
-Descarga `atril-teleprompter_1.2.0_all.deb` y ábrelo con el instalador de paquetes. También puedes instalarlo desde la carpeta de descarga con:
+Descarga `atril-teleprompter_2.1.0_all.deb` y ábrelo con el instalador de paquetes. También puedes instalarlo desde la carpeta de descarga con:
 
 ```bash
-sudo apt install ./atril-teleprompter_1.2.0_all.deb
+sudo apt install ./atril-teleprompter_2.1.0_all.deb
 ```
 
 Después busca **Atril Teleprónter** en el menú de aplicaciones. El ejecutable se llama `atril-teleprompter` para no interferir con el visor de documentos Atril.
@@ -40,21 +42,21 @@ Necesita Python 3.10 o posterior, PyQt5 5.15, Qt Multimedia y FFmpeg. El gestor 
 ## Instalar en Fedora
 
 ```bash
-sudo dnf install ./atril-teleprompter-1.2.0-1.noarch.rpm
+sudo dnf install ./atril-teleprompter-2.1.0-1.noarch.rpm
 ```
 
 El RPM declara las dependencias de Python, PyQt5, Qt Multimedia y FFmpeg. Está preparado para Fedora; no se afirma compatibilidad con todas las distribuciones que usan RPM. No se convierte a partir del paquete Debian.
 
 ## Instalar en Arch Linux
 
-Descarga `atril-teleprompter-1.2.0-1-any.pkg.tar.zst` desde la
-[release de GitHub](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v1.2.0)
-o la [release de GitLab](https://gitlab.com/PacoEstrada/atril-teleprompter/-/releases/v1.2.0).
+Descarga `atril-teleprompter-2.1.0-1-any.pkg.tar.zst` desde la
+[release de GitHub](https://github.com/pacoestrada/atril-teleprompter/releases/tag/v2.1.0)
+o la [release de GitLab](https://gitlab.com/PacoEstrada/atril-teleprompter/-/releases/v2.1.0).
 Desde la carpeta de descarga, con Arch actualizado:
 
 ```bash
 sudo pacman -Syu
-sudo pacman -U ./atril-teleprompter-1.2.0-1-any.pkg.tar.zst
+sudo pacman -U ./atril-teleprompter-2.1.0-1-any.pkg.tar.zst
 ```
 
 El paquete está construido de forma nativa con `makepkg`. Pacman instala
@@ -70,7 +72,7 @@ makepkg -si
 ```
 
 Ejecuta `makepkg` sin `sudo`. La receta verifica las fuentes de la versión
-1.2.0 y ejecuta las pruebas antes de generar el paquete. No está publicada
+2.1.0 y ejecuta las pruebas antes de generar el paquete. No está publicada
 en AUR. Consulta las [instrucciones de Arch](packaging/arch/README.md) para
 instalar un paquete ya construido, comprobarlo o desinstalarlo.
 
@@ -93,7 +95,7 @@ Al sustituir el guion, se conserva una copia del anterior. **Recuperar guion ant
 4. **Pausa** o **Ctrl+R** pausa y reanuda la misma toma, sin insertar el tiempo de pausa en el archivo. **Detener** o **Ctrl+Mayús+R** termina la grabación.
 5. Pulsa **Guardar grabación** o **Ctrl+Alt+S**. El navegador de archivos permite elegir carpeta, nombre y formato **WAV**, **FLAC** o **MP3**.
 
-La barra del vúmetro indica RMS; la marca blanca indica el pico en dBFS. El aviso **SATURACIÓN** detecta tanto una entrada saturada como un exceso de ganancia. Bajar la ganancia digital no repara audio que ya llega distorsionado. La forma de onda muestra la envolvente de los últimos cinco segundos; la toma completa se escribe en disco.
+El vúmetro analógico simulado tiene iluminación cálida y una aguja con inercia que sigue el nivel RMS. Su referencia es **0 VU = −18 dBFS RMS**; superar el cero y entrar en la zona roja de la escala no significa por sí solo que el audio esté saturado. La lectura inferior conserva el pico en dBFS. El piloto rojo y el aviso **SATURACIÓN** detectan tanto una entrada saturada como un exceso de ganancia, sin esperar al movimiento de la aguja. Bajar la ganancia digital no repara audio que ya llega distorsionado. La forma de onda muestra la envolvente de los últimos cinco segundos; la toma completa se escribe en disco.
 
 Se prioriza PCM de 48 kHz, 16 bits y un canal; si la entrada no lo admite se negocia otra frecuencia o dos canales. El formato real aparece junto al estado. WAV conserva el PCM; FLAC comprime sin pérdida; MP3 usa compresión con pérdida y calidad VBR alta. No se aplica normalización automática, filtro de ruido ni monitorización por altavoces.
 
@@ -153,7 +155,7 @@ El guardado usa un archivo temporal y un reemplazo atómico para evitar sesiones
 
 ## Alcance
 
-El avance es a velocidad fija, expresada en píxeles lógicos por segundo; no sigue la voz. El tiempo restante es aproximado. La versión 1.2.0 incorpora grabación de voz. Atril no graba vídeo, no sincroniza con la nube y no ofrece una segunda ventana independiente para otro monitor. Puede moverse a otro monitor como cualquier ventana de escritorio.
+El avance es a velocidad fija, expresada en píxeles lógicos por segundo; no sigue la voz. El tiempo restante es aproximado. La grabación de voz está disponible desde la versión 1.2.0. Atril no graba vídeo, no sincroniza con la nube y no ofrece una segunda ventana independiente para otro monitor. Puede moverse a otro monitor como cualquier ventana de escritorio.
 
 La importación de Word y LibreOffice extrae texto, no reproduce su maquetación, imágenes ni estilos. Admite documentos de hasta 8 MB y guiones de hasta un millón de caracteres. Conviene revisar el texto importado antes de una lectura. PDF y el antiguo formato `.doc` no se admiten.
 

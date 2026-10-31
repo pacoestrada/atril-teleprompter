@@ -1,6 +1,6 @@
 # Maintainer: Paco Estrada
 pkgname=atril-teleprompter
-pkgver=1.2.0
+pkgver=2.1.0
 pkgrel=1
 pkgdesc='Offline teleprompter for scripts, videos and podcasts by Paco Estrada / Compilando'
 arch=('any')
@@ -10,7 +10,7 @@ depends=('python>=3.10' 'python-pyqt5>=5.15' 'qt5-multimedia' 'ffmpeg')
 checkdepends=('desktop-file-utils' 'ttf-dejavu')
 optdepends=('ttf-dejavu: preferred font for the interface and reading area')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/releases/download/v${pkgver}/${pkgname}-${pkgver}.tar.gz")
-sha256sums=('ef5e3d45e046156019b76b35d199bbfac645ec95644f969892e4a80896ef48f1')
+sha256sums=('1fc1e7d501be2043194fa7ae440e7bb903ad75908b9b9bd8f7395706626a072f')
 
 check() {
     cd "${pkgname}-${pkgver}"
